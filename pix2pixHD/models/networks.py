@@ -36,7 +36,7 @@ def define_G(input_nc, output_nc, ngf, netG, n_downsample_global=3, n_blocks_glo
         netG = Encoder(input_nc, output_nc, ngf, n_downsample_global, norm_layer)
     else:
         raise('generator not implemented!')
-    print(netG)
+    # print(netG)
     if len(gpu_ids) > 0:
         assert(torch.cuda.is_available())   
         netG.cuda(gpu_ids[0])
@@ -46,7 +46,7 @@ def define_G(input_nc, output_nc, ngf, netG, n_downsample_global=3, n_blocks_glo
 def define_D(input_nc, ndf, n_layers_D, norm='instance', use_sigmoid=False, num_D=1, getIntermFeat=False, gpu_ids=[]):        
     norm_layer = get_norm_layer(norm_type=norm)   
     netD = MultiscaleDiscriminator(input_nc, ndf, n_layers_D, norm_layer, use_sigmoid, num_D, getIntermFeat)   
-    print(netD)
+    # print(netD)
     if len(gpu_ids) > 0:
         assert(torch.cuda.is_available())
         netD.cuda(gpu_ids[0])
@@ -85,14 +85,16 @@ class GANLoss(nn.Module):
             create_label = ((self.real_label_var is None) or
                             (self.real_label_var.numel() != input.numel()))
             if create_label:
-                real_tensor = self.Tensor(input.size()).fill_(self.real_label)
+                # real_tensor = self.Tensor(input.size()).fill_(self.real_label)
+                real_tensor = torch.full(input.size(), self.real_label, dtype=input.dtype, device=input.device)
                 self.real_label_var = Variable(real_tensor, requires_grad=False)
             target_tensor = self.real_label_var
         else:
             create_label = ((self.fake_label_var is None) or
                             (self.fake_label_var.numel() != input.numel()))
             if create_label:
-                fake_tensor = self.Tensor(input.size()).fill_(self.fake_label)
+                fake_tensor = torch.full(input.size(), self.fake_label, dtype=input.dtype, device=input.device)
+                # fake_tensor = self.Tensor(input.size()).fill_(self.fake_label)
                 self.fake_label_var = Variable(fake_tensor, requires_grad=False)
             target_tensor = self.fake_label_var
         return target_tensor
@@ -386,7 +388,7 @@ from torchvision import models
 class Vgg19(torch.nn.Module):
     def __init__(self, requires_grad=False):
         super(Vgg19, self).__init__()
-        vgg_pretrained_features = models.vgg19(models.VGG19_Weights.IMAGENET1K_V1).features
+        vgg_pretrained_features = models.vgg19(weights=models.VGG19_Weights.IMAGENET1K_V1).features
         self.slice1 = torch.nn.Sequential()
         self.slice2 = torch.nn.Sequential()
         self.slice3 = torch.nn.Sequential()
