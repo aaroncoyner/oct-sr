@@ -38,10 +38,10 @@ class AlignedDataset(BaseDataset):
         A = Image.open(A_path)        
         params = get_params(self.opt, A.size)
         if self.opt.label_nc == 0:
-            transform_A = get_transform(self.opt, params)
+            transform_A = get_transform(self.opt, params, grayscale=(self.opt.input_nc == 1)) # for input_nc == 1
             A_tensor = transform_A(A.convert('RGB'))
         else:
-            transform_A = get_transform(self.opt, params, method=Image.NEAREST, normalize=False)
+            transform_A = get_transform(self.opt, params, grayscale=False, method=Image.NEAREST, normalize=False) # for input_nc == 1
             A_tensor = transform_A(A) * 255.0
 
         B_tensor = inst_tensor = feat_tensor = 0
@@ -49,7 +49,7 @@ class AlignedDataset(BaseDataset):
         if self.opt.isTrain or self.opt.use_encoded_image:
             B_path = self.B_paths[index]   
             B = Image.open(B_path).convert('RGB')
-            transform_B = get_transform(self.opt, params)      
+            transform_B = get_transform(self.opt, params, grayscale=(self.opt.output_nc == 1)) # for output_nc == 1
             B_tensor = transform_B(B)
 
         ### if using instance maps        

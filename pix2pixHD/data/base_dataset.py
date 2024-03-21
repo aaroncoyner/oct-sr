@@ -30,8 +30,11 @@ def get_params(opt, size):
     flip = random.random() > 0.5
     return {'crop_pos': (x, y), 'flip': flip}
 
-def get_transform(opt, params, method=Image.BICUBIC, normalize=True):
+# def get_transform(opt, params, method=Image.BICUBIC, normalize=True):
+def get_transform(opt, params, grayscale=False, method=Image.BICUBIC, normalize=True): # for input_nc == 1
     transform_list = []
+    if grayscale: # for input_nc == 1
+        transform_list.append(transforms.Grayscale(1))
     if 'resize' in opt.resize_or_crop:
         osize = [opt.loadSize, opt.loadSize]
         transform_list.append(transforms.Scale(osize, method))   
@@ -53,8 +56,11 @@ def get_transform(opt, params, method=Image.BICUBIC, normalize=True):
     transform_list += [transforms.ToTensor()]
 
     if normalize:
-        transform_list += [transforms.Normalize((0.5, 0.5, 0.5),
-                                                (0.5, 0.5, 0.5))]
+        if grayscale: # for input_nc == 1
+            transform_list += [transforms.Normalize([0.5], [0.5])]
+        else: # for input_nc == 1
+            transform_list += [transforms.Normalize((0.5, 0.5, 0.5),
+                                                    (0.5, 0.5, 0.5))]
     return transforms.Compose(transform_list)
 
 def normalize():    
