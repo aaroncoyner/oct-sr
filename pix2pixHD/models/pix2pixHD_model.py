@@ -187,20 +187,29 @@ class Pix2PixHDModel(BaseModel):
         # VGG feature matching loss
         loss_G_VGG = 0
         if not self.opt.no_vgg_loss:
-            if self.opt.input_nc == 1:  # for input_nc == 1
-                image_shape = fake_image.shape  # Assuming fake_image is defined and has a shape [N, C, H, W]
-                # Allocate tensors with the correct device and dtype from fake_image
-                fake_image3 = torch.zeros(image_shape[0], 3, image_shape[2], image_shape[3], device=fake_image.device, dtype=fake_image.dtype)
-                real_image3 = torch.zeros_like(fake_image3)  # Clone the properties of fake_image3
+            if self.opt.input_nc == 1:  # for input_nc == 1 (grayscale)
+                image_shape = fake_image.shape  # Assuming fake_image has shape [N, 1, H, W]
 
-                # Use broadcasting to copy the grayscale image across the RGB channels
-                fake_image3[:, 0, :, :] = fake_image3[:, 1, :, :] = fake_image3[:, 2, :, :] = fake_image
-                real_image3[:, 0, :, :] = real_image3[:, 1, :, :] = real_image3[:, 2, :, :] = real_image
+                # Allocate new tensors for RGB images with 3 channels
+                fake_image3 = torch.zeros(image_shape[0], 3, image_shape[2], image_shape[3], 
+                                          device=fake_image.device, dtype=fake_image.dtype)
+                real_image3 = torch.zeros_like(fake_image3)  # Same shape as fake_image3
 
-                # Compute the loss
+                # Use broadcasting to copy grayscale image across the 3 RGB channels
+                fake_image3[:, 0, :, :] = fake_image[:, 0, :, :]  # Copy the grayscale channel
+                fake_image3[:, 1, :, :] = fake_image[:, 0, :, :]  # Copy to all RGB channels
+                fake_image3[:, 2, :, :] = fake_image[:, 0, :, :]
+
+                real_image3[:, 0, :, :] = real_image[:, 0, :, :]
+                real_image3[:, 1, :, :] = real_image[:, 0, :, :]
+                real_image3[:, 2, :, :] = real_image[:, 0, :, :]
+
+                # Compute the VGG loss
                 loss_G_VGG = self.criterionVGG(fake_image3, real_image3) * self.opt.lambda_feat
             else:
+                # When input has multiple channels (e.g., RGB)
                 loss_G_VGG = self.criterionVGG(fake_image, real_image) * self.opt.lambda_feat
+
 
         
         # Only return the fake_B image if necessary to save BW
@@ -306,8 +315,7 @@ class Pix2PixHDModel(BaseModel):
             param_group['lr'] = lr
         for param_group in self.optimizer_G.param_groups:
             param_group['lr'] = lr
-        if self.opt.verbose:
-            print('update learning rate: %f -> %f' % (self.old_lr, lr))
+        print('update learning rate: %f -> %f' % (self.old_lr, lr))
         self.old_lr = lr
 
 class InferenceModel(Pix2PixHDModel):
