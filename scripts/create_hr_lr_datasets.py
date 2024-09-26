@@ -25,7 +25,6 @@ def resize_image(img, size=(800, 800)):
 def subsample_image(img, output_size):
     height, width, _ = img.shape
     subsampled_images = []
-    
     if output_size == (800, 100):
         for start_row in range(8):
             subsampled_images.append(img[start_row::8, :, :])
@@ -38,10 +37,8 @@ def subsample_image(img, output_size):
             for start_col in range(2):
                 subsampled_images.append(img[start_row::2, start_col::2, :])
     else:
-        raise ValueError("Invalid output size. Choose from (800, 100), (400, 100), or (400, 400).")
-    
+        raise ValueError("Invalid output size. Choose from (800, 100), (400, 100), or (400, 400).")    
     return subsampled_images
-
 
 
 def save_images(hr, lr, hr_dest, lr_dest, base_name, index):
