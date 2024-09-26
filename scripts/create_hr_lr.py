@@ -81,9 +81,8 @@ def main(src, hr_dest, lr_dest, output_size):
 
 if __name__ == '__main__':
     SRC = '../datasets/raw/'
-    OUTPUT_SIZE = (800, 100)
-
-    hr_dest = f'../datasets/{OUTPUT_SIZE[0]}x{OUTPUT_SIZE[1]}/hr/'
-    lr_dest = f'../datasets/{OUTPUT_SIZE[0]}x{OUTPUT_SIZE[1]}/lr/'
-    
-    main(SRC, hr_dest, lr_dest, OUTPUT_SIZE)
+    SIZES = [(800,100), (400,400), (400,100)]
+    for size in SIZES:
+        hr_dest = f'../datasets/{size[0]}x{size[1]}/hr/'
+        lr_dest = f'../datasets/{size[0]}x{size[1]}/lr/'
+        main(SRC, hr_dest, lr_dest, size)

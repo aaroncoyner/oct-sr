@@ -69,14 +69,15 @@ def main(dataset_dirs):
 
 
 if __name__ == '__main__':
-    OUTPUT_SIZE = (800, 100)
-    dataset_dirs = {
-        'base_dir': f'../datasets/{OUTPUT_SIZE[0]}x{OUTPUT_SIZE[1]}',
-        'hr_dir': f'../datasets/{OUTPUT_SIZE[0]}x{OUTPUT_SIZE[1]}/hr',
-        'lr_dir': f'../datasets/{OUTPUT_SIZE[0]}x{OUTPUT_SIZE[1]}/lr',
-        'train_a': f'../datasets/{OUTPUT_SIZE[0]}x{OUTPUT_SIZE[1]}/train_A',
-        'train_b': f'../datasets/{OUTPUT_SIZE[0]}x{OUTPUT_SIZE[1]}/train_B',
-        'test_a': f'../datasets/{OUTPUT_SIZE[0]}x{OUTPUT_SIZE[1]}/test_A',
-        'test_b': f'../datasets/{OUTPUT_SIZE[0]}x{OUTPUT_SIZE[1]}/test_B'
-    }
-    main(dataset_dirs)
+    SIZES = [(800,100), (400,400), (400,100)]
+    for size in SIZES:
+        dataset_dirs = {
+            'base_dir': f'../datasets/{size[0]}x{size[1]}',
+            'hr_dir': f'../datasets/{size[0]}x{size[1]}/hr',
+            'lr_dir': f'../datasets/{size[0]}x{size[1]}/lr',
+            'train_a': f'../datasets/{size[0]}x{size[1]}/train_A',
+            'train_b': f'../datasets/{size[0]}x{size[1]}/train_B',
+            'test_a': f'../datasets/{size[0]}x{size[1]}/test_A',
+            'test_b': f'../datasets/{size[0]}x{size[1]}/test_B'
+        }
+        main(dataset_dirs)
