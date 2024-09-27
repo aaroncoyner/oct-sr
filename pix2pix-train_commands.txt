@@ -2,4 +2,4 @@ python train.py --no_instance --name super_res-800_100 --dataroot ../datasets/80
 
 python train.py --no_instance --name super_res-400_400 --dataroot ../datasets/400x400 --niter 20 --niter_decay 60
 
-python train.py --no_instance --name super_res-400_100 --dataroot ../datasets/400x100 --niter 5 --niter_decay 15
+python train.py --no_instance --name super_res-400_100 --dataroot ../datasets/400x100 --niter 10 --niter_decay 30

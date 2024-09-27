@@ -1,5 +1,6 @@
 import os
 import cv2
+import random
 from tqdm import tqdm
 from concurrent.futures import ThreadPoolExecutor
 import itertools
@@ -32,6 +33,7 @@ def subsample_image(img, output_size):
         for start_row in range(8):
             for start_col in range(2):
                 subsampled_images.append(img[start_row::8, start_col::2, :])
+        subsampled_images = random.sample(subsampled_images, 8)
     elif output_size == (400, 400):
         for start_row in range(2):
             for start_col in range(2):
@@ -62,6 +64,8 @@ def process_image(f_name, src, hr_dest, lr_dest, output_size):
 
 
 def process_images_in_parallel(src, hr_dest, lr_dest, output_size):
+    if output_size == (400,100):
+        random.seed(1337)
     file_names = os.listdir(src)
     with ThreadPoolExecutor() as executor:
         list(tqdm(executor.map(
@@ -81,7 +85,7 @@ def main(src, hr_dest, lr_dest, output_size):
 
 if __name__ == '__main__':
     SRC = '../datasets/raw/'
-    SIZES = [(800,100), (400,400), (400,100)]
+    SIZES = [(400,100)]
     for size in SIZES:
         hr_dest = f'../datasets/{size[0]}x{size[1]}/hr/'
         lr_dest = f'../datasets/{size[0]}x{size[1]}/lr/'
