@@ -15,8 +15,8 @@ def create_directories(dirs):
 def prepare_images_dataframe(hr_dir, lr_dir):
     images = pd.DataFrame({'file_name': os.listdir(hr_dir)})
     images['mrn'] = images['file_name'].str.split('-', n=1).str[0]
-    images['hr'] = os.path.join(hr_dir, images['file_name'])
-    images['lr'] = os.path.join(lr_dir, images['file_name'])
+    images['hr'] = images['file_name'].apply(lambda x: os.path.join(hr_dir, x))
+    images['lr'] = images['file_name'].apply(lambda x: os.path.join(lr_dir, x))
     return images
 
 
